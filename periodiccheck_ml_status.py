@@ -1,9 +1,8 @@
-
+# update
 import threading
 import time
-from mongo_db import data_collection, json_collection
-from pipelineScrapJsonApi.common_utils import file_status 
-
+from common_utils import file_status
+from mongo_db import data_collection, json_collection 
 
 
 # Function to periodically check ML status API and update MongoDB
@@ -42,6 +41,12 @@ def check_ml_status():
                             data_collection.update_one(
                             {"postId": post_id},
                             {"$set": {"Status": -2}, "$inc": {"failedMLExtractionCount": 1}})
+
+                        elif status_code == 401:
+                            print(f"ML status for post {post_id} is not finished yet.")
+                            return f"ML status for post {post_id} is not finished yet."
+
+
 
                         elif status_code == 500:
                             api_data = data_collection.find_one({"postId": post_id})
